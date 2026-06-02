@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
+<meta name="theme-color" content="#1F3D2E" />
+<title>The Battery Club — Conscious Energy</title>
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --navy: #1F3D2E;
+  --navy-deep: #142A1F;
+  --sage: #C8D7B0;
+  --sage-soft: #E5EBD6;
+  --orange: #D97757;
+  --orange-soft: #F5E0D3;
+  --orange-deep: #B85A3D;
+  --cream: #FAF6F1;
+  --grey: #6B7280;
+  --grey-light: #E5E7EB;
+  --dark: #1a1d23;
+  --green: #10B981;
+  --red: #DC2626;
+  --display: 'Fraunces', Georgia, serif;
+  --body: 'DM Sans', system-ui, sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; overflow-x: hidden; }
+body {
+  font-family: var(--body);
+  background: var(--cream);
+  color: var(--dark);
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+}
+
+header {
+  position: sticky; top: 0;
+  background: var(--navy);
+  color: var(--cream);
+  padding: 14px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  z-index: 100;
+  box-shadow: 0 2px 16px rgba(31, 61, 46, 0.2);
+}
+.brand-wrap { display: flex; align-items: center; gap: 12px; }
+.brand-mark {
+  width: 46px; height: 46px;
+  background: #fff;
+  border-radius: 11px;
+  padding: 3px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+.brand {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.brand .dot { color: var(--orange); }
+.brand-sub {
+  font-size: 0.65rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--sage);
+  margin-top: 2px;
+  font-weight: 600;
+}
+.reset-btn {
+  background: rgba(255,255,255,0.08);
+  border: none;
+  color: var(--cream);
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-family: var(--body);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.progress { display: flex; gap: 6px; padding: 14px 20px 4px; background: var(--cream); }
+.progress-dot { flex: 1; height: 4px; background: var(--grey-light); border-radius: 2px; transition: background 0.3s; }
+.progress-dot.active { background: var(--orange); }
+.progress-dot.done { background: var(--navy); }
+
+.steps-wrap { position: relative; padding: 20px 20px 120px; min-height: calc(100vh - 100px); }
+.step { display: none; animation: fadeIn 0.3s ease; }
+.step.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+.step-eyebrow { font-weight: 600; font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--orange); margin-bottom: 10px; }
+.step-title { font-family: var(--display); font-weight: 600; font-size: 1.85rem; line-height: 1.05; letter-spacing: -0.025em; color: var(--navy); margin-bottom: 8px; }
+.step-title .accent { color: var(--orange); font-style: italic; font-weight: 500; }
+.step-intro { font-size: 0.98rem; color: var(--grey); margin-bottom: 22px; line-height: 1.5; }
+
+.lifestyle-grid { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+.lifestyle-btn {
+  background: white; border: 2px solid var(--grey-light); border-radius: 14px; padding: 16px 18px;
+  text-align: left; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 16px;
+  font-family: var(--body); width: 100%;
+}
+.lifestyle-btn:active { transform: scale(0.98); }
+.lifestyle-btn.selected { border-color: var(--orange); background: var(--orange-soft); }
+.lifestyle-icon { width: 44px; height: 44px; background: var(--cream); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--navy); transition: all 0.2s; }
+.lifestyle-btn.selected .lifestyle-icon { background: var(--orange); color: white; }
+.lifestyle-icon svg { display: block; }
+.lifestyle-content { flex: 1; }
+.lifestyle-name { font-family: var(--display); font-weight: 600; font-size: 1.05rem; color: var(--navy); letter-spacing: -0.01em; margin-bottom: 2px; }
+.lifestyle-desc { font-size: 0.82rem; color: var(--grey); }
+
+/* ===== Tariff checker ===== */
+.tariff-box { margin-top: 16px; background: var(--navy); border-radius: 16px; padding: 18px 18px 16px; color: var(--cream); }
+.tariff-box .tb-head { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; color: var(--sage); margin-bottom: 4px; }
+.tariff-box .tb-sub { font-size: 0.82rem; color: rgba(255,255,255,0.7); line-height: 1.45; margin-bottom: 12px; }
+.tariff-row { display: flex; gap: 8px; }
+.tariff-row select { flex: 1.2; min-width: 0; padding: 11px 10px; border-radius: 10px; border: 1px solid rgba(200,215,176,0.25); background: rgba(255,255,255,0.06); color: #fff; font-family: var(--body); font-size: 0.92rem; }
+.tariff-row input { flex: 1; min-width: 0; padding: 11px 12px; border-radius: 10px; border: 1px solid rgba(200,215,176,0.25); background: rgba(255,255,255,0.06); color: #fff; font-family: var(--body); font-size: 0.95rem; text-transform: uppercase; }
+.tariff-row select:focus, .tariff-row input:focus { outline: none; border-color: var(--orange); }
+.tariff-row input::placeholder { color: rgba(200,215,176,0.5); }
+.tariff-btn { background: var(--sage); color: var(--navy-deep); border: none; border-radius: 10px; padding: 0 16px; font-family: var(--body); font-weight: 700; font-size: 0.85rem; cursor: pointer; white-space: nowrap; }
+.tariff-btn:active { transform: scale(0.97); }
+.tariff-btn:disabled { opacity: 0.6; }
+.tariff-status { font-size: 0.8rem; color: rgba(200,215,176,0.85); margin-top: 10px; line-height: 1.45; }
+.tariff-status.live { color: #fff; }
+.tariff-status.live b { color: var(--sage); }
+.tariff-status.fallback b { color: var(--orange-soft); }
+
+.match-card { background: var(--navy); color: var(--cream); border-radius: 20px; padding: 26px 22px; margin-bottom: 18px; position: relative; overflow: hidden; }
+.match-card::before { content: ''; position: absolute; top: -40px; right: -40px; width: 180px; height: 180px; background: radial-gradient(circle, rgba(217, 119, 87, 0.20) 0%, transparent 70%); }
+.match-pre { font-size: 0.78rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--orange); font-weight: 600; margin-bottom: 6px; }
+.match-name { font-family: var(--display); font-weight: 600; font-size: 1.7rem; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 14px; }
+.match-spec { display: flex; gap: 18px; margin: 18px 0; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.1); }
+.match-spec-item { flex: 1; }
+.match-spec-label { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255, 228, 214, 0.7); margin-bottom: 4px; }
+.match-spec-val { font-family: var(--display); font-weight: 600; font-size: 1.4rem; letter-spacing: -0.02em; }
+.match-price { font-family: var(--display); font-weight: 700; font-size: 2.6rem; line-height: 1; letter-spacing: -0.035em; color: var(--orange); margin-top: 4px; }
+.match-price-sub { font-size: 0.82rem; color: rgba(255, 228, 214, 0.7); margin-top: 4px; }
+
+.term-picker { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; background: white; border: 1px solid var(--grey-light); padding: 6px; border-radius: 14px; margin-bottom: 14px; }
+.pay-toggle { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; background: white; border: 1px solid var(--grey-light); padding: 6px; border-radius: 14px; margin-bottom: 16px; }
+.pay-toggle-btn { background: transparent; border: none; padding: 13px 4px; border-radius: 9px; cursor: pointer; font-family: var(--body); font-weight: 700; font-size: 0.95rem; color: var(--navy); transition: all 0.2s; }
+.pay-toggle-btn.selected { background: var(--orange); color: white; }
+.term-btn { background: transparent; border: none; padding: 12px 4px; border-radius: 9px; cursor: pointer; font-family: var(--body); font-weight: 600; font-size: 0.92rem; color: var(--navy); transition: all 0.2s; }
+.term-btn.selected { background: var(--navy); color: white; }
+.finance-display { background: white; border: 1px solid var(--grey-light); border-radius: 14px; padding: 20px; margin-bottom: 14px; }
+.finance-row { display: flex; justify-content: space-between; align-items: baseline; padding: 8px 0; border-bottom: 1px solid var(--grey-light); }
+.finance-row:last-child { border-bottom: none; }
+.finance-label { font-size: 0.9rem; color: var(--grey); }
+.finance-val { font-family: var(--display); font-weight: 600; font-size: 1.2rem; color: var(--navy); }
+.finance-monthly { text-align: center; padding: 18px 0 6px; border-top: 2px solid var(--orange); margin-top: 8px; }
+.finance-monthly-label { font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--grey); font-weight: 600; }
+.finance-monthly-val { font-family: var(--display); font-weight: 700; font-size: 2.4rem; letter-spacing: -0.03em; color: var(--orange); line-height: 1; margin: 6px 0 2px; }
+.finance-monthly-sub { font-size: 0.78rem; color: var(--grey); }
+.apr-note { font-size: 0.7rem; color: var(--grey); line-height: 1.5; font-style: italic; }
+
+.pitch-headline { background: linear-gradient(135deg, var(--orange), var(--orange-deep)); color: white; border-radius: 20px; padding: 26px 22px; margin-bottom: 14px; text-align: center; }
+.pitch-headline-label { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 700; opacity: 0.9; margin-bottom: 6px; }
+.pitch-headline-val { font-family: var(--display); font-weight: 700; font-size: 3.4rem; letter-spacing: -0.04em; line-height: 1; margin-bottom: 6px; }
+.pitch-headline-sub { font-size: 0.88rem; opacity: 0.9; line-height: 1.4; }
+.pitch-lifetime { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--navy); color: white; border-radius: 14px; padding: 14px 20px; margin-bottom: 14px; }
+.pl-label { font-size: 0.9rem; font-weight: 600; color: var(--sage); line-height: 1.25; }
+.pl-val { font-family: var(--display); font-weight: 700; font-size: 1.9rem; letter-spacing: -0.02em; white-space: nowrap; }
+.pitch-cashflow { background: white; border: 1px solid var(--grey-light); border-radius: 14px; padding: 18px; margin-bottom: 14px; }
+.cf-headline { font-family: var(--display); font-weight: 600; font-size: 1.05rem; color: var(--navy); margin-bottom: 12px; }
+.cf-mini { display: flex; justify-content: space-between; align-items: baseline; padding: 6px 0; }
+.cf-mini-label { font-size: 0.88rem; color: var(--grey); }
+.cf-mini-val { font-family: var(--display); font-weight: 600; font-size: 1.1rem; color: var(--navy); }
+.cf-mini-val.positive { color: var(--green); }
+.cf-mini-val.negative { color: var(--grey); }
+
+.pitch-bullets { list-style: none; margin-bottom: 8px; }
+.pitch-bullets li { padding: 10px 0; font-size: 0.95rem; color: var(--dark); display: flex; gap: 12px; border-bottom: 1px solid var(--grey-light); }
+.pitch-bullets li:last-child { border-bottom: none; }
+.pitch-bullets .tick { flex-shrink: 0; width: 22px; height: 22px; background: var(--green); color: white; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.78rem; }
+
+.lead-form { display: flex; flex-direction: column; gap: 12px; }
+.field-label { font-size: 0.85rem; font-weight: 600; color: var(--navy); margin-bottom: 4px; display: block; }
+.field-hint { font-size: 0.72rem; color: var(--grey); margin-top: 5px; line-height: 1.4; }
+.lead-form input, .lead-form select, .lead-form textarea { width: 100%; padding: 14px 16px; background: white; border: 1.5px solid var(--grey-light); border-radius: 12px; font-family: var(--body); font-size: 1rem; color: var(--dark); outline: none; transition: border 0.2s; -webkit-appearance: none; appearance: none; }
+.lead-form input:focus, .lead-form select:focus, .lead-form textarea:focus { border-color: var(--orange); }
+.lead-form textarea { min-height: 70px; resize: vertical; }
+
+.grade-pills { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.grade-pill { background: white; border: 1.5px solid var(--grey-light); padding: 10px 4px; border-radius: 10px; font-family: var(--body); font-weight: 700; font-size: 0.82rem; text-align: center; cursor: pointer; color: var(--grey); }
+.grade-pill[data-grade="HOT"].selected { background: var(--red); color: white; border-color: var(--red); }
+.grade-pill[data-grade="WARM"].selected { background: var(--orange); color: white; border-color: var(--orange); }
+.grade-pill[data-grade="COOL"].selected { background: #94A3B8; color: white; border-color: #94A3B8; }
+.grade-pill[data-grade="NO"].selected { background: var(--grey); color: white; border-color: var(--grey); }
+
+.confirm-icon { width: 80px; height: 80px; background: var(--green); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 20px auto 24px; font-size: 2.4rem; font-weight: 700; }
+.confirm-summary { background: white; border: 1px solid var(--grey-light); border-radius: 14px; padding: 18px; margin-bottom: 14px; }
+.submit-status { text-align: center; font-size: 0.92rem; font-weight: 600; color: var(--grey); padding: 12px 16px; background: white; border: 1px solid var(--grey-light); border-radius: 12px; margin-bottom: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.submit-status.success { color: var(--green); background: rgba(16, 185, 129, 0.08); border-color: rgba(16, 185, 129, 0.3); }
+.submit-status.error { color: var(--red); background: rgba(220, 38, 38, 0.06); border-color: rgba(220, 38, 38, 0.3); }
+.submit-status.warn { color: var(--orange); background: var(--orange-soft); border-color: var(--orange); }
+.cs-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 0.92rem; border-bottom: 1px solid var(--grey-light); }
+.cs-row:last-child { border-bottom: none; }
+.cs-row .label { color: var(--grey); }
+.cs-row .val { color: var(--navy); font-weight: 600; }
+
+.send-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+
+.footer-cta { position: fixed; bottom: 0; left: 0; right: 0; padding: 14px 20px 20px; background: linear-gradient(180deg, rgba(250,246,241,0) 0%, var(--cream) 30%); display: flex; gap: 10px; z-index: 90; }
+.btn { flex: 1; padding: 16px; border: none; border-radius: 999px; font-family: var(--body); font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.2s; text-align: center; }
+.btn:active { transform: scale(0.97); }
+.btn-primary { background: var(--navy); color: var(--cream); }
+.btn-primary:disabled { background: var(--grey-light); color: var(--grey); cursor: not-allowed; }
+.btn-secondary { background: white; color: var(--navy); border: 1.5px solid var(--grey-light); flex: 0 0 100px; }
+.btn-orange { background: var(--orange); color: white; }
+.btn-success { background: var(--green); color: white; }
+
+.tip-box { background: var(--orange-soft); border-left: 4px solid var(--orange); padding: 12px 14px; border-radius: 8px; margin-bottom: 16px; font-size: 0.88rem; color: var(--navy); line-height: 1.5; }
+.tip-box strong { color: var(--orange); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand-wrap">
+    <img class="brand-mark" src="data:image/png;base64,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" alt="Conscious Energy" />
+    <div>
+      <div class="brand">The Battery Club<span class="dot">.</span></div>
+      <div class="brand-sub">by Conscious Energy</div>
+    </div>
+  </div>
+  <button class="reset-btn" onclick="reset()">Reset</button>
+</header>
+
+<div class="progress">
+  <div class="progress-dot active" id="p1"></div>
+  <div class="progress-dot" id="p2"></div>
+  <div class="progress-dot" id="p3"></div>
+  <div class="progress-dot" id="p4"></div>
+  <div class="progress-dot" id="p5"></div>
+</div>
+
+<div class="steps-wrap">
+
+  <div class="step active" id="step1">
+    <div class="step-eyebrow">Step 1 of 5 · Sizing</div>
+    <h1 class="step-title">Which sounds <span class="accent">like them?</span></h1>
+
+    <div class="lifestyle-grid">
+      <button class="lifestyle-btn" data-lifestyle="light" data-usage="7" data-battery="5.8" data-price="3850">
+        <div class="lifestyle-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><circle cx="12" cy="8" r="3.5"/><path d="M5 21v-1a7 7 0 0 1 14 0v1"/></svg>
+        </div>
+        <div class="lifestyle-content">
+          <div class="lifestyle-name">Just me / couple</div>
+          <div class="lifestyle-desc">Low use · ~£60–80/mo · ~7 kWh/day</div>
+        </div>
+      </button>
+      <button class="lifestyle-btn" data-lifestyle="average" data-usage="11" data-battery="11.6" data-price="5100">
+        <div class="lifestyle-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><circle cx="8" cy="7" r="2.5"/><circle cx="16" cy="7" r="2.5"/><path d="M3 21v-2a5 5 0 0 1 10 0v2M11 21v-2a5 5 0 0 1 10 0v2"/></svg>
+        </div>
+        <div class="lifestyle-content">
+          <div class="lifestyle-name">Small family</div>
+          <div class="lifestyle-desc">Average use · ~£90–130/mo · ~11 kWh/day</div>
+        </div>
+      </button>
+      <button class="lifestyle-btn" data-lifestyle="heavy" data-usage="18" data-battery="17.4" data-price="6400">
+        <div class="lifestyle-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg>
+        </div>
+        <div class="lifestyle-content">
+          <div class="lifestyle-name">Higher usage</div>
+          <div class="lifestyle-desc">High use · ~£150–220/mo · ~15–22 kWh/day</div>
+        </div>
+      </button>
+      <button class="lifestyle-btn" data-lifestyle="very-heavy" data-usage="28" data-battery="23.2" data-price="7700">
+        <div class="lifestyle-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><path d="M3 11l9-8 9 8v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-9z"/><path d="M12 9l-2 4h3l-2 4" stroke-linecap="round"/></svg>
+        </div>
+        <div class="lifestyle-content">
+          <div class="lifestyle-name">Very heavy / large home</div>
+          <div class="lifestyle-desc">Very high · ~£230+/mo · ~28+ kWh/day</div>
+        </div>
+      </button>
+    </div>
+
+    <div class="tip-box">
+      <strong>Tip:</strong> If they're not sure of their usage, ask <em>"Roughly what's your electricity bill each month?"</em> — that's the quickest way to size them up.
+    </div>
+
+    <div class="tariff-box">
+      <div class="tb-head">Smart tariff rate</div>
+      <div class="tb-sub">Enter their postcode to pull the live Octopus off-peak rate for their area. Feeds straight into the savings.</div>
+      <div class="tariff-row">
+        <select id="tariffType">
+          <option value="iog">Intelligent Octopus Go</option>
+          <option value="go">Octopus Go</option>
+        </select>
+        <input type="text" id="tariffPostcode" placeholder="Postcode" autocomplete="postal-code" />
+        <button type="button" class="tariff-btn" id="tariffBtn" onclick="checkTariff()">Get rate</button>
+      </div>
+      <div class="tariff-status" id="tariffStatus">Using a typical <b>7p</b> off-peak rate. Add a postcode for their exact area.</div>
+    </div>
+  </div>
+
+  <div class="step" id="step2">
+    <div class="step-eyebrow">Step 2 of 5 · Their system</div>
+    <h2 class="step-title">Here's <span class="accent">their system.</span></h2>
+
+    <div class="match-card">
+      <div class="match-pre">Matched system</div>
+      <div class="match-name" id="matchName">10 kWh Battery System</div>
+      <div class="match-spec">
+        <div class="match-spec-item">
+          <div class="match-spec-label">Capacity</div>
+          <div class="match-spec-val" id="matchCap">10 kWh</div>
+        </div>
+        <div class="match-spec-item">
+          <div class="match-spec-label">Daily use</div>
+          <div class="match-spec-val" id="matchUse">~11 kWh</div>
+        </div>
+      </div>
+      <div class="match-spec-label" style="margin-top: 10px;">Fitted price</div>
+      <div class="match-price" id="matchPrice">£4,200</div>
+      <div class="match-price-sub">Premium kit, MCS install, 10-yr warranty</div>
+    </div>
+
+    <div class="pitch-bullets" style="background: white; border-radius: 14px; padding: 8px 16px; border: 1px solid var(--grey-light);">
+      <li><span class="tick">✓</span> Installed in a day</li>
+      <li><span class="tick">✓</span> Free tariff switch on the day</li>
+      <li><span class="tick">✓</span> Solar-ready · EV-ready</li>
+      <li><span class="tick">✓</span> 10-year parts &amp; labour warranty</li>
+    </div>
+  </div>
+
+  <div class="step" id="step3">
+    <div class="step-eyebrow">Step 3 of 5 · The numbers</div>
+    <h2 class="step-title" id="payHeadline">From <span class="accent">£XX/month.</span></h2>
+
+    <div class="pay-toggle" id="payToggle">
+      <button class="pay-toggle-btn" data-pay="cash">Pay outright</button>
+      <button class="pay-toggle-btn selected" data-pay="finance">Finance</button>
+    </div>
+
+    <!-- ===== CASH VIEW ===== -->
+    <div id="cashView" style="display:none;">
+      <div class="finance-display">
+        <div class="finance-row">
+          <span class="finance-label">System cost (one-off)</span>
+          <span class="finance-val" id="cashCost">£4,200</span>
+        </div>
+        <div class="finance-row">
+          <span class="finance-label">Year 1 bill saving</span>
+          <span class="finance-val" id="cashYear1">£768</span>
+        </div>
+        <div class="finance-row">
+          <span class="finance-label">Pays for itself in</span>
+          <span class="finance-val" id="cashPayback">5.2 yrs</span>
+        </div>
+        <div class="finance-monthly">
+          <div class="finance-monthly-label">Effective annual return</div>
+          <div class="finance-monthly-val" id="cashReturn">18%</div>
+          <div class="finance-monthly-sub">tax-free · vs ~4–5% in a savings account</div>
+        </div>
+      </div>
+      <div class="apr-note">
+        Return based on year 1 bill savings against the one-off cost, with 5% energy price inflation thereafter. Battery is owned outright from day one — no interest, no monthly payments.
+      </div>
+    </div>
+
+    <!-- ===== FINANCE VIEW ===== -->
+    <div id="financeView">
+      <label class="field-label">Finance term</label>
+      <div class="term-picker" id="termPicker">
+        <button class="term-btn" data-term="3">3 yr</button>
+        <button class="term-btn" data-term="5">5 yr</button>
+        <button class="term-btn" data-term="7">7 yr</button>
+        <button class="term-btn selected" data-term="10">10 yr</button>
+      </div>
+
+      <div class="finance-display">
+        <div class="finance-row">
+          <span class="finance-label">System cost</span>
+          <span class="finance-val" id="financeCost">£4,200</span>
+        </div>
+        <div class="finance-row">
+          <span class="finance-label">APR</span>
+          <span class="finance-val">10.9%</span>
+        </div>
+        <div class="finance-row">
+          <span class="finance-label">Term</span>
+          <span class="finance-val" id="financeTerm">10 years</span>
+        </div>
+        <div class="finance-row">
+          <span class="finance-label">Total payable</span>
+          <span class="finance-val" id="financeTotal">£6,914</span>
+        </div>
+        <div class="finance-monthly">
+          <div class="finance-monthly-label">Per month</div>
+          <div class="finance-monthly-val" id="financeMonthly">£57.62</div>
+          <div class="finance-monthly-sub">subject to status &amp; credit check</div>
+        </div>
+      </div>
+
+      <div class="apr-note">
+        10.9% APR representative. Regulated finance arranged via Conscious Energy (FCA-authorised representative). Subject to status &amp; credit check.
+      </div>
+    </div>
+  </div>
+
+  <div class="step" id="step4">
+    <div class="step-eyebrow">Step 4 of 5 · The pitch</div>
+    <h2 class="step-title">Show them <span class="accent">the profit.</span></h2>
+
+    <div class="pitch-headline">
+      <div class="pitch-headline-label">10-Year Profit</div>
+      <div class="pitch-headline-val" id="profitVal">+£2,280</div>
+      <div class="pitch-headline-sub">5% annual energy price inflation · battery is their asset throughout</div>
+    </div>
+
+    <div class="pitch-lifetime">
+      <span class="pl-label">Over 15 years<br>(battery's life)</span>
+      <span class="pl-val" id="lifetimeVal">+£13,900</span>
+    </div>
+
+    <div class="pitch-cashflow" id="cfFinance">
+      <div class="cf-headline">Year 1 monthly cash flow</div>
+      <div class="cf-mini">
+        <span class="cf-mini-label">Bill saving</span>
+        <span class="cf-mini-val positive" id="cfSave">+£64</span>
+      </div>
+      <div class="cf-mini">
+        <span class="cf-mini-label">Finance payment</span>
+        <span class="cf-mini-val negative" id="cfCost">−£58</span>
+      </div>
+      <div class="cf-mini" style="border-top: 1px solid var(--grey-light); margin-top: 6px; padding-top: 10px;">
+        <span class="cf-mini-label" style="font-weight: 600; color: var(--navy);">Year 1 net</span>
+        <span class="cf-mini-val" id="cfNet">+£6</span>
+      </div>
+    </div>
+
+    <div class="pitch-cashflow" id="cfCash" style="display:none;">
+      <div class="cf-headline">Paid outright</div>
+      <div class="cf-mini">
+        <span class="cf-mini-label">One-off cost</span>
+        <span class="cf-mini-val" id="cfCashCost">£6,400</span>
+      </div>
+      <div class="cf-mini">
+        <span class="cf-mini-label">Year 1 bill saving</span>
+        <span class="cf-mini-val positive" id="cfCashSave">+£1,099</span>
+      </div>
+      <div class="cf-mini" style="border-top: 1px solid var(--grey-light); margin-top: 6px; padding-top: 10px;">
+        <span class="cf-mini-label" style="font-weight: 600; color: var(--navy);">Annual return</span>
+        <span class="cf-mini-val positive" id="cfCashReturn">17%</span>
+      </div>
+    </div>
+
+    <ul class="pitch-bullets" id="bulletsFinance">
+      <li><span class="tick">✓</span> Bill savings start day one</li>
+      <li><span class="tick">✓</span> Break-even reached by year 2 as rates rise</li>
+      <li><span class="tick">✓</span> After year 10, finance ends — savings continue</li>
+      <li><span class="tick">✓</span> They own the asset throughout</li>
+    </ul>
+
+    <ul class="pitch-bullets" id="bulletsCash" style="display:none;">
+      <li><span class="tick">✓</span> Owned outright from day one — no interest</li>
+      <li><span class="tick">✓</span> Tax-free return beating most savings accounts</li>
+      <li><span class="tick">✓</span> Returns grow as energy prices rise</li>
+      <li><span class="tick">✓</span> Adds value to the property</li>
+    </ul>
+
+    <div class="tip-box" id="tipFinance">
+      <strong>Closing line:</strong> "Year 1 — basically pays for itself. Year 10 — they're up <span id="closeProfit">£2,280</span>. Over the battery's life, <span id="closeLifetime">£13,900</span>. And they still own it."
+    </div>
+
+    <div class="tip-box" id="tipCash" style="display:none;">
+      <strong>Closing line:</strong> "Put that <span id="closeCashCost">£6,400</span> in the bank, you'd get 4–5%. Put it on the wall, you're getting <span id="closeCashReturn">17%</span> — tax-free — and it keeps climbing as prices rise. Over the battery's life that's <span id="closeCashLifetime">£13,900</span> in your pocket."
+    </div>
+  </div>
+
+  <div class="step" id="step5">
+    <div class="step-eyebrow">Step 5 of 5 · Lead capture</div>
+    <h2 class="step-title">Lock it <span class="accent">in.</span></h2>
+
+    <form class="lead-form" onsubmit="event.preventDefault(); next();">
+      <div>
+        <label class="field-label" for="leadCanvasser">Your name (canvasser)</label>
+        <input type="text" id="leadCanvasser" placeholder="e.g. Sam Jones" required />
+      </div>
+      <div>
+        <label class="field-label" for="leadName">Customer's full name</label>
+        <input type="text" id="leadName" placeholder="e.g. John Smith" autocomplete="name" required />
+      </div>
+      <div>
+        <label class="field-label" for="leadMobile">Mobile</label>
+        <input type="tel" id="leadMobile" placeholder="07xxx xxxxxx" autocomplete="tel" required />
+      </div>
+      <div>
+        <label class="field-label" for="leadPostcode">Postcode</label>
+        <input type="text" id="leadPostcode" placeholder="e.g. L19 2NB" autocomplete="postal-code" style="text-transform: uppercase;" required />
+      </div>
+      <div>
+        <label class="field-label" for="leadProperty">Property type</label>
+        <select id="leadProperty">
+          <option value="">— Select —</option>
+          <option value="Detached">Detached house</option>
+          <option value="Semi-detached">Semi-detached house</option>
+          <option value="Terraced">Terraced house</option>
+          <option value="Bungalow">Bungalow</option>
+          <option value="Flat/Apartment">Flat / Apartment</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div>
+        <label class="field-label" for="leadBattLoc">Where can the battery go?</label>
+        <select id="leadBattLoc">
+          <option value="">— Select —</option>
+          <option value="Garage">Garage (integral / attached)</option>
+          <option value="Outbuilding">Outbuilding / detached garage</option>
+          <option value="Outside">Outside (external wall)</option>
+          <option value="Unsure">Unsure — flag for survey</option>
+        </select>
+        <p class="field-hint">No longer allowed in habitable rooms or lofts — garage, outbuilding or outside only.</p>
+      </div>
+      <div>
+        <label class="field-label" for="leadRemoval">Old equipment to remove / dispose?</label>
+        <select id="leadRemoval">
+          <option value="No">No</option>
+          <option value="Yes">Yes</option>
+        </select>
+      </div>
+      <div>
+        <label class="field-label" for="leadCallback">Best time for callback</label>
+        <select id="leadCallback">
+          <option value="ASAP">ASAP — they're hot</option>
+          <option value="Morning">Morning (9am–12pm)</option>
+          <option value="Afternoon">Afternoon (12pm–5pm)</option>
+          <option value="Evening">Evening (5pm–8pm)</option>
+          <option value="Weekend">Weekend only</option>
+        </select>
+      </div>
+      <div>
+        <label class="field-label">Lead grade</label>
+        <div class="grade-pills" id="gradePills">
+          <button type="button" class="grade-pill" data-grade="HOT">HOT</button>
+          <button type="button" class="grade-pill selected" data-grade="WARM">WARM</button>
+          <button type="button" class="grade-pill" data-grade="COOL">COOL</button>
+          <button type="button" class="grade-pill" data-grade="NO">NO</button>
+        </div>
+      </div>
+      <div>
+        <label class="field-label" for="leadNotes">Notes (future EV / solar PV, decision-makers, access)</label>
+        <textarea id="leadNotes" placeholder="e.g. EV in next 2 yrs, solar PV planned, both partners present, drive parking"></textarea>
+      </div>
+    </form>
+  </div>
+
+  <div class="step" id="step6">
+    <div class="confirm-icon">✓</div>
+    <h2 class="step-title" style="text-align: center;">Lead ready <span class="accent">to send.</span></h2>
+
+    <div id="submitStatus" class="submit-status">Saving to office...</div>
+
+    <div class="confirm-summary" id="leadSummary"></div>
+
+    <div class="send-actions">
+      <button class="btn btn-orange" onclick="sendWhatsApp()">WhatsApp</button>
+      <button class="btn btn-success" onclick="sendEmail()">Email</button>
+    </div>
+    <button class="btn btn-primary" style="width: 100%; margin-bottom: 12px;" onclick="resendToSheet()" id="resendBtn">Re-send to office</button>
+    <button class="btn btn-primary" style="width: 100%; margin-bottom: 12px;" onclick="copyToClipboard()">Copy details</button>
+    <button class="btn btn-secondary" style="width: 100%; flex: 1;" onclick="reset()">Next customer</button>
+  </div>
+</div>
+
+<div class="footer-cta" id="footerCta">
+  <button class="btn btn-secondary" id="backBtn" onclick="prev()" style="display: none;">← Back</button>
+  <button class="btn btn-primary" id="nextBtn" onclick="next()" disabled>Continue</button>
+</div>
+
+<script>
+// ===== CONFIG =====
+const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycby8H7SmIwt4cP4lV672kV6uljvgHg9mwOhkxw6etXx4UsLMcg17MDUwZSib82Os1jlG/exec';
+
+// ===== STATE =====
+const state = {
+  step: 1,
+  lifestyle: null,
+  usage: 11,
+  battery: 10,
+  cost: 4200,
+  term: 10,
+  monthly: 0,
+  total: 0,
+  year1Save: 0,
+  year1Net: 0,
+  tenYrProfit: 0,
+  lifetimeProfit: 0,
+  tenYrProfitFin: 0,
+  lifetimeProfitFin: 0,
+  tenYrProfitCash: 0,
+  lifetimeProfitCash: 0,
+  payMode: 'finance',
+  cashYear1Save: 0,
+  cashPayback: 0,
+  cashReturn: 0,
+  lead: {
+    canvasser: '', name: '', mobile: '', postcode: '', property: '', battLoc: '', removal: 'No', callback: 'ASAP', grade: 'WARM', notes: ''
+  }
+};
+
+const APR = 0.109;
+const OFF_PEAK_DEFAULT = 7;     // typical Intelligent Octopus Go off-peak rate (p/kWh)
+const STANDARD = 27;
+const INFLATION = 0.05;        // peak rate annual inflation
+const OFFPEAK_INFLATION = 0.04; // off-peak rate annual inflation (based on Octopus Go 5p 2018 -> ~7p 2026)
+const EFFICIENCY = 0.9;
+const TOTAL_STEPS = 6;
+
+// Off-peak rate is mutable so the tariff checker can update it from a postcode lookup
+state.offPeak = OFF_PEAK_DEFAULT;
+
+// ===== HELPERS =====
+function monthlyPayment(p, apr, years) {
+  const r = apr/12;
+  const n = years*12;
+  return p*r*Math.pow(1+r, n)/(Math.pow(1+r, n) - 1);
+}
+
+function yearlySave(usage, battery, year) {
+  const usable = battery * 0.9;
+  const discharge = Math.min(usage, usable);
+  const peakRate = STANDARD * Math.pow(1 + INFLATION, year - 1);
+  const offPeakRate = state.offPeak * Math.pow(1 + OFFPEAK_INFLATION, year - 1);
+  const spk = peakRate - (offPeakRate / EFFICIENCY);
+  return discharge * spk / 100 * 365;
+}
+
+function recalc() {
+  state.monthly = monthlyPayment(state.cost, APR, state.term);
+  state.total = state.monthly * state.term * 12;   // total payable incl. interest
+  state.year1Save = yearlySave(state.usage, state.battery, 1) / 12;
+  state.year1Net = state.year1Save - state.monthly;
+
+  // Total bill savings over 10 and 15 years (same for both pay modes)
+  let total10 = 0;
+  for (let y=1; y<=10; y++) total10 += yearlySave(state.usage, state.battery, y);
+  let total15 = 0;
+  for (let y=1; y<=15; y++) total15 += yearlySave(state.usage, state.battery, y);
+
+  // FINANCE profit: savings minus what they actually pay (incl. interest)
+  const finance10 = state.monthly * Math.min(state.term, 10) * 12;
+  state.tenYrProfitFin = total10 - finance10;
+  state.lifetimeProfitFin = total15 - state.total;
+
+  // CASH profit: savings minus the one-off cost only (no interest)
+  state.tenYrProfitCash = total10 - state.cost;
+  state.lifetimeProfitCash = total15 - state.cost;
+
+  // Active profit figures follow the chosen pay mode (used by pitch/summary)
+  const cash = state.payMode === 'cash';
+  state.tenYrProfit = cash ? state.tenYrProfitCash : state.tenYrProfitFin;
+  state.lifetimeProfit = cash ? state.lifetimeProfitCash : state.lifetimeProfitFin;
+
+  // ===== CASH (pay outright) figures =====
+  const annualSave1 = yearlySave(state.usage, state.battery, 1); // year-1 annual saving
+  state.cashYear1Save = annualSave1;
+  state.cashReturn = state.cost > 0 ? (annualSave1 / state.cost) * 100 : 0;
+  let cum = 0, yr = 0;
+  while (cum < state.cost && yr < 30) {
+    yr++;
+    cum += yearlySave(state.usage, state.battery, yr);
+  }
+  const prevCum = cum - yearlySave(state.usage, state.battery, yr);
+  const intoYear = (state.cost - prevCum) / yearlySave(state.usage, state.battery, yr);
+  state.cashPayback = (yr - 1) + intoYear;
+}
+
+function fmt(n, fixed=2) {
+  return '£' + n.toFixed(fixed).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+function fmtInt(n) {
+  return '£' + Math.round(n).toLocaleString();
+}
+
+// ===== STEP NAVIGATION =====
+function showStep(n) {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  document.getElementById('step' + n).classList.add('active');
+  state.step = n;
+  updateProgress();
+  updateFooter();
+  window.scrollTo(0, 0);
+}
+
+function updateProgress() {
+  for (let i=1; i<=5; i++) {
+    const dot = document.getElementById('p' + i);
+    dot.classList.remove('active', 'done');
+    if (i < state.step) dot.classList.add('done');
+    else if (i === state.step) dot.classList.add('active');
+  }
+}
+
+function updateFooter() {
+  const back = document.getElementById('backBtn');
+  const next = document.getElementById('nextBtn');
+  const footer = document.getElementById('footerCta');
+
+  if (state.step === 6) {
+    footer.style.display = 'none';
+    return;
+  }
+  footer.style.display = 'flex';
+
+  back.style.display = state.step > 1 ? 'inline-block' : 'none';
+
+  if (state.step === 1) {
+    next.disabled = !state.lifestyle;
+    next.textContent = 'Continue →';
+  } else if (state.step === 5) {
+    next.textContent = 'Save lead →';
+    const okay = state.lead.canvasser && state.lead.name && state.lead.mobile && state.lead.postcode;
+    next.disabled = !okay;
+  } else {
+    next.disabled = false;
+    next.textContent = 'Continue →';
+  }
+}
+
+function next() {
+  if (state.step === 5) {
+    state.lead.canvasser = document.getElementById('leadCanvasser').value.trim();
+    state.lead.name = document.getElementById('leadName').value.trim();
+    state.lead.mobile = document.getElementById('leadMobile').value.trim();
+    state.lead.postcode = document.getElementById('leadPostcode').value.trim().toUpperCase();
+    state.lead.property = document.getElementById('leadProperty').value;
+    state.lead.battLoc = document.getElementById('leadBattLoc').value;
+    state.lead.removal = document.getElementById('leadRemoval').value;
+    state.lead.callback = document.getElementById('leadCallback').value;
+    state.lead.notes = document.getElementById('leadNotes').value.trim();
+    try { localStorage.setItem('canvasserName', state.lead.canvasser); } catch(e) {}
+    buildSummary();
+    showStep(6);
+    submitToSheet();
+  } else if (state.step < TOTAL_STEPS) {
+    showStep(state.step + 1);
+    if (state.step === 2) renderMatch();
+    if (state.step === 3) { renderPay(); }
+    if (state.step === 4) renderPitch();
+  }
+}
+
+function prev() {
+  if (state.step > 1) showStep(state.step - 1);
+}
+
+function reset() {
+  state.step = 1;
+  state.lifestyle = null;
+  const keepCanvasser = state.lead.canvasser;
+  state.lead = { canvasser: keepCanvasser, name:'', mobile:'', postcode:'', property:'', battLoc:'', removal:'No', callback:'ASAP', grade:'WARM', notes:'' };
+  document.querySelectorAll('.lifestyle-btn').forEach(b => b.classList.remove('selected'));
+  document.querySelectorAll('.grade-pill').forEach(p => p.classList.remove('selected'));
+  document.querySelector('.grade-pill[data-grade="WARM"]').classList.add('selected');
+  document.querySelectorAll('.term-btn').forEach(b => b.classList.remove('selected'));
+  document.querySelector('.term-btn[data-term="10"]').classList.add('selected');
+  state.term = 10;
+  state.payMode = 'finance';
+  document.querySelectorAll('.pay-toggle-btn').forEach(b => b.classList.remove('selected'));
+  document.querySelector('.pay-toggle-btn[data-pay="finance"]').classList.add('selected');
+  ['leadName','leadMobile','leadPostcode','leadNotes'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('leadProperty').value = '';
+  document.getElementById('leadBattLoc').value = '';
+  document.getElementById('leadRemoval').value = 'No';
+  document.getElementById('leadCallback').value = 'ASAP';
+  // Reset tariff checker
+  state.offPeak = OFF_PEAK_DEFAULT;
+  document.getElementById('tariffPostcode').value = '';
+  document.getElementById('tariffType').value = 'iog';
+  const ts = document.getElementById('tariffStatus');
+  ts.className = 'tariff-status';
+  ts.innerHTML = 'Using a typical <b>7p</b> off-peak rate. Add a postcode for their exact area.';
+  showStep(1);
+}
+
+// ===== STEP 1: LIFESTYLE =====
+document.querySelectorAll('.lifestyle-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.lifestyle-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    state.lifestyle = btn.dataset.lifestyle;
+    state.usage = parseFloat(btn.dataset.usage);
+    state.battery = parseFloat(btn.dataset.battery);
+    state.cost = parseFloat(btn.dataset.price);
+    recalc();
+    updateFooter();
+  });
+});
+
+// ===== OCTOPUS TARIFF CHECKER =====
+const OCTO = 'https://api.octopus.energy/v1';
+const SMART_TARIFFS = {
+  iog: { name: 'Intelligent Octopus Go', fallback: 7.0 },
+  go:  { name: 'Octopus Go',             fallback: 8.5 }
+};
+
+async function findOctopusProduct(name) {
+  let url = OCTO + '/products/?brand=OCTOPUS_ENERGY', best = null;
+  for (let i = 0; i < 6 && url; i++) {
+    const d = await fetch(url).then(r => r.json());
+    (d.results || []).forEach(p => {
+      if (p.display_name === name && p.direction === 'IMPORT' && p.available_to === null) {
+        if (!best || new Date(p.available_from) > new Date(best.available_from)) best = p;
+      }
+    });
+    url = d.next;
+  }
+  return best;
+}
+
+// Netlify serverless proxy (avoids CORS when hosted)
+async function proxyOctopus(t, pc, signal) {
+  try {
+    const r = await fetch('/.netlify/functions/octopus?tariff=' + t + '&postcode=' + encodeURIComponent(pc), { signal }).then(r => r.json());
+    if (r && r.ok && typeof r.rate === 'number') return { rate: r.rate, region: r.region };
+  } catch (_) {}
+  return null;
+}
+
+// Direct browser call (works if Octopus allows CORS from the hosting origin)
+async function directOctopus(t, pc, signal) {
+  try {
+    const cfg = SMART_TARIFFS[t]; const opt = { signal };
+    const gsp = await fetch(OCTO + '/industry/grid-supply-points/?postcode=' + encodeURIComponent(pc), opt).then(r => r.json());
+    const grp = gsp.results && gsp.results[0] && gsp.results[0].group_id; if (!grp) return null;
+    const region = grp.replace('_', '');
+    const prod = await findOctopusProduct(cfg.name); if (!prod) return null;
+    const detail = await fetch(OCTO + '/products/' + prod.code + '/', opt).then(r => r.json());
+    const reg = detail.single_register_electricity_tariffs && detail.single_register_electricity_tariffs['_' + region];
+    const tcode = reg && reg.direct_debit_monthly && reg.direct_debit_monthly.code; if (!tcode) return null;
+    const rates = await fetch(OCTO + '/products/' + prod.code + '/electricity-tariffs/' + tcode + '/standard-unit-rates/', opt).then(r => r.json());
+    const vals = (rates.results || []).map(r => r.value_inc_vat).filter(v => typeof v === 'number'); if (!vals.length) return null;
+    return { rate: Math.min(...vals), region };
+  } catch (_) { return null; }
+}
+
+async function checkTariff() {
+  const status = document.getElementById('tariffStatus');
+  const btn = document.getElementById('tariffBtn');
+  const t = document.getElementById('tariffType').value;
+  const cfg = SMART_TARIFFS[t];
+  const pc = (document.getElementById('tariffPostcode').value || '').trim();
+  if (!pc) { status.className = 'tariff-status'; status.textContent = 'Enter a postcode first (even just the first half, e.g. L12).'; return; }
+
+  status.className = 'tariff-status'; status.textContent = 'Checking live Octopus rates…';
+  btn.disabled = true;
+  const ctrl = new AbortController(); const to = setTimeout(() => ctrl.abort(), 10000);
+  let res = await proxyOctopus(t, pc, ctrl.signal);
+  if (!res) res = await directOctopus(t, pc, ctrl.signal);
+  clearTimeout(to);
+  btn.disabled = false;
+
+  if (res && typeof res.rate === 'number') {
+    state.offPeak = res.rate;
+    status.className = 'tariff-status live';
+    status.innerHTML = '✓ Live: ' + cfg.name + ' off-peak in region ' + res.region + ' = <b>' + res.rate.toFixed(2) + 'p/kWh</b>';
+  } else {
+    state.offPeak = cfg.fallback;
+    status.className = 'tariff-status fallback';
+    status.innerHTML = 'Couldn’t pull live here — using typical <b>' + cfg.fallback + 'p</b> for ' + cfg.name + '. Confirm against their bill.';
+  }
+  recalc();
+  updateFooter();
+}
+
+
+// ===== STEP 2: MATCH RENDER =====
+function renderMatch() {
+  document.getElementById('matchName').textContent = state.battery + ' kWh Battery System';
+  document.getElementById('matchCap').textContent = state.battery + ' kWh';
+  document.getElementById('matchUse').textContent = '~' + state.usage + ' kWh';
+  document.getElementById('matchPrice').textContent = fmtInt(state.cost);
+}
+
+// ===== STEP 3: PAY MODE TOGGLE =====
+document.querySelectorAll('.pay-toggle-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.pay-toggle-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    state.payMode = btn.dataset.pay;
+    renderPay();
+  });
+});
+
+document.querySelectorAll('.term-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.term-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    state.term = parseInt(btn.dataset.term);
+    recalc();
+    renderFinance();
+  });
+});
+
+function renderPay() {
+  recalc();
+  const cashV = document.getElementById('cashView');
+  const finV = document.getElementById('financeView');
+  if (state.payMode === 'cash') {
+    cashV.style.display = 'block';
+    finV.style.display = 'none';
+    renderCash();
+  } else {
+    cashV.style.display = 'none';
+    finV.style.display = 'block';
+    renderFinance();
+  }
+}
+
+function renderCash() {
+  document.getElementById('cashCost').textContent = fmtInt(state.cost);
+  document.getElementById('cashYear1').textContent = fmtInt(state.cashYear1Save);
+  document.getElementById('cashPayback').textContent = state.cashPayback.toFixed(1) + ' yrs';
+  document.getElementById('cashReturn').textContent = Math.round(state.cashReturn) + '%';
+  const h = document.getElementById('payHeadline');
+  h.innerHTML = 'A <span class="accent">' + Math.round(state.cashReturn) + '% return.</span>';
+}
+
+function renderFinance() {
+  document.getElementById('financeCost').textContent = fmtInt(state.cost);
+  document.getElementById('financeTerm').textContent = state.term + ' years';
+  document.getElementById('financeTotal').textContent = fmtInt(state.total);
+  document.getElementById('financeMonthly').textContent = fmt(state.monthly, 2);
+  const h = document.getElementById('payHeadline');
+  h.innerHTML = 'From <span class="accent">' + fmt(state.monthly, 0) + '/month.</span>';
+}
+
+// ===== STEP 4: PITCH =====
+function renderPitch() {
+  recalc();
+  document.getElementById('profitVal').textContent = (state.tenYrProfit >= 0 ? '+' : '−') + fmtInt(Math.abs(state.tenYrProfit));
+  // Finance cash-flow block
+  document.getElementById('cfSave').textContent = '+' + fmt(state.year1Save, 0);
+  document.getElementById('cfCost').textContent = '−' + fmt(state.monthly, 0);
+  const netEl = document.getElementById('cfNet');
+  netEl.textContent = (state.year1Net >= 0 ? '+' : '−') + fmt(Math.abs(state.year1Net), 0);
+  netEl.className = 'cf-mini-val ' + (state.year1Net >= 0 ? 'positive' : 'negative');
+  document.getElementById('closeProfit').textContent = fmtInt(Math.abs(state.tenYrProfit));
+  document.getElementById('lifetimeVal').textContent = (state.lifetimeProfit >= 0 ? '+' : '−') + fmtInt(Math.abs(state.lifetimeProfit));
+  document.getElementById('closeLifetime').textContent = fmtInt(Math.abs(state.lifetimeProfit));
+
+  // Cash block
+  document.getElementById('cfCashCost').textContent = fmtInt(state.cost);
+  document.getElementById('cfCashSave').textContent = '+' + fmtInt(state.cashYear1Save);
+  document.getElementById('cfCashReturn').textContent = Math.round(state.cashReturn) + '%';
+  document.getElementById('closeCashCost').textContent = fmtInt(state.cost);
+  document.getElementById('closeCashReturn').textContent = Math.round(state.cashReturn) + '%';
+  document.getElementById('closeCashLifetime').textContent = fmtInt(Math.abs(state.lifetimeProfit));
+
+  // Show the right blocks for the chosen pay mode
+  const cash = state.payMode === 'cash';
+  document.getElementById('cfFinance').style.display = cash ? 'none' : 'block';
+  document.getElementById('cfCash').style.display = cash ? 'block' : 'none';
+  document.getElementById('bulletsFinance').style.display = cash ? 'none' : 'block';
+  document.getElementById('bulletsCash').style.display = cash ? 'block' : 'none';
+  document.getElementById('tipFinance').style.display = cash ? 'none' : 'block';
+  document.getElementById('tipCash').style.display = cash ? 'block' : 'none';
+}
+
+// ===== STEP 5: LEAD GRADING =====
+document.querySelectorAll('.grade-pill').forEach(p => {
+  p.addEventListener('click', () => {
+    document.querySelectorAll('.grade-pill').forEach(o => o.classList.remove('selected'));
+    p.classList.add('selected');
+    state.lead.grade = p.dataset.grade;
+  });
+});
+
+['leadCanvasser','leadName','leadMobile','leadPostcode'].forEach(id => {
+  document.getElementById(id).addEventListener('input', () => {
+    const key = id.replace('lead','').toLowerCase();
+    state.lead[key] = document.getElementById(id).value;
+    if (id === 'leadCanvasser') {
+      try { localStorage.setItem('canvasserName', document.getElementById(id).value); } catch(e) {}
+    }
+    updateFooter();
+  });
+});
+
+// ===== STEP 6: SUMMARY & ACTIONS =====
+function buildSummary() {
+  const lead = state.lead;
+  const summary = `
+    <div class="cs-row"><span class="label">Canvasser</span><span class="val">${escapeHtml(lead.canvasser)}</span></div>
+    <div class="cs-row"><span class="label">Customer</span><span class="val">${escapeHtml(lead.name)}</span></div>
+    <div class="cs-row"><span class="label">Mobile</span><span class="val">${escapeHtml(lead.mobile)}</span></div>
+    <div class="cs-row"><span class="label">Postcode</span><span class="val">${escapeHtml(lead.postcode)}</span></div>
+    ${lead.property ? `<div class="cs-row"><span class="label">Property</span><span class="val">${escapeHtml(lead.property)}</span></div>` : ''}
+    ${lead.battLoc ? `<div class="cs-row"><span class="label">Battery location</span><span class="val">${escapeHtml(lead.battLoc)}</span></div>` : ''}
+    <div class="cs-row"><span class="label">Remove old kit</span><span class="val">${escapeHtml(lead.removal)}</span></div>
+    <div class="cs-row"><span class="label">Callback</span><span class="val">${escapeHtml(lead.callback)}</span></div>
+    <div class="cs-row"><span class="label">Grade</span><span class="val">${escapeHtml(lead.grade)}</span></div>
+    <div class="cs-row"><span class="label">System</span><span class="val">${state.battery} kWh — ${fmtInt(state.cost)}</span></div>
+    <div class="cs-row"><span class="label">Pitched as</span><span class="val">${state.payMode === 'cash' ? 'Pay outright' : 'Finance'}</span></div>
+    ${state.payMode === 'finance' ? `<div class="cs-row"><span class="label">Monthly</span><span class="val">${fmt(state.monthly, 2)} (${state.term} yr)</span></div>` : ''}
+    ${state.payMode === 'cash' ? `<div class="cs-row"><span class="label">Cash return</span><span class="val">${Math.round(state.cashReturn)}% · ${state.cashPayback.toFixed(1)} yr payback</span></div>` : ''}
+    <div class="cs-row"><span class="label">10-yr profit</span><span class="val">${fmtInt(state.tenYrProfit)}</span></div>
+    <div class="cs-row"><span class="label">15-yr profit</span><span class="val">${fmtInt(state.lifetimeProfit)}</span></div>
+    ${lead.notes ? `<div class="cs-row"><span class="label">Notes</span><span class="val" style="max-width: 60%; text-align: right;">${escapeHtml(lead.notes)}</span></div>` : ''}
+  `;
+  document.getElementById('leadSummary').innerHTML = summary;
+}
+
+function setSubmitStatus(msg, type) {
+  const el = document.getElementById('submitStatus');
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.remove('success', 'error', 'warn');
+  if (type) el.classList.add(type);
+}
+
+function buildPayload() {
+  return {
+    canvasser: state.lead.canvasser,
+    name: state.lead.name,
+    mobile: state.lead.mobile,
+    postcode: state.lead.postcode,
+    property: state.lead.property,
+    battLoc: state.lead.battLoc,
+    removal: state.lead.removal,
+    grade: state.lead.grade,
+    callback: state.lead.callback,
+    lifestyle: state.lifestyle,
+    offPeakRate: state.offPeak.toFixed(2) + 'p',
+    battery: state.battery,
+    cost: state.cost,
+    term: state.term,
+    monthly: state.monthly.toFixed(2),
+    payMode: state.payMode === 'cash' ? 'Pay outright' : 'Finance',
+    cashReturn: Math.round(state.cashReturn) + '%',
+    cashPayback: state.cashPayback.toFixed(1) + ' yrs',
+    profit: Math.round(state.tenYrProfit),
+    lifetimeProfit: Math.round(state.lifetimeProfit),
+    notes: state.lead.notes
+  };
+}
+
+async function submitToSheet() {
+  if (!WEBHOOK_URL || WEBHOOK_URL.includes('PASTE_YOUR')) {
+    setSubmitStatus('Office sheet not configured yet — use WhatsApp or Email below', 'warn');
+    return;
+  }
+  setSubmitStatus('Saving to office...');
+  try {
+    await fetch(WEBHOOK_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify(buildPayload()),
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+    });
+    setSubmitStatus('Saved to office — lead in the sheet', 'success');
+  } catch (err) {
+    setSubmitStatus('Could not reach office — tap Re-send, or use WhatsApp / Email below', 'error');
+  }
+}
+
+function resendToSheet() {
+  submitToSheet();
+}
+
+function leadAsText() {
+  const lead = state.lead;
+  return `NEW LEAD — The Battery Club (Conscious Energy)
+
+Canvasser: ${lead.canvasser}
+Customer: ${lead.name}
+Mobile: ${lead.mobile}
+Postcode: ${lead.postcode}
+Property: ${lead.property || '—'}
+Battery location: ${lead.battLoc || '—'}
+Remove old kit: ${lead.removal}
+Callback: ${lead.callback}
+Grade: ${lead.grade}
+
+System: ${state.battery} kWh battery — ${fmtInt(state.cost)}
+Finance: ${fmt(state.monthly, 2)}/mo over ${state.term} years (10.9% APR)
+10-yr profit projection: ${fmtInt(state.tenYrProfit)}
+15-yr (battery life) projection: ${fmtInt(state.lifetimeProfit)}
+
+${lead.notes ? 'Notes: ' + lead.notes : ''}
+`;
+}
+
+function sendWhatsApp() {
+  const text = encodeURIComponent(leadAsText());
+  window.open('https://wa.me/?text=' + text, '_blank');
+}
+
+function sendEmail() {
+  const subject = encodeURIComponent('New lead — ' + state.lead.name + ' (' + state.lead.postcode + ')');
+  const body = encodeURIComponent(leadAsText());
+  window.location.href = 'mailto:dave@consciousenergy.co.uk?subject=' + subject + '&body=' + body;
+}
+
+function copyToClipboard() {
+  navigator.clipboard.writeText(leadAsText()).then(() => {
+    const btn = event.target;
+    const original = btn.textContent;
+    btn.textContent = '✓ Copied';
+    setTimeout(() => btn.textContent = original, 1500);
+  });
+}
+
+function escapeHtml(s) {
+  return (s || '').replace(/[<>&"']/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'})[c]);
+}
+
+// ===== INIT =====
+let savedCanvasser = '';
+try { savedCanvasser = localStorage.getItem('canvasserName') || ''; } catch(e) {}
+if (savedCanvasser) {
+  document.getElementById('leadCanvasser').value = savedCanvasser;
+  state.lead.canvasser = savedCanvasser;
+}
+
+recalc();
+updateProgress();
+updateFooter();
+</script>
+
+</body>
+</html>
