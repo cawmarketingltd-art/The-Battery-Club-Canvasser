@@ -407,6 +407,10 @@ header {
           <span class="finance-label">Total payable</span>
           <span class="finance-val" id="financeTotal">£6,914</span>
         </div>
+        <div class="finance-row">
+          <span class="finance-label">Pays for itself in</span>
+          <span class="finance-val" id="financePayback">8.4 yrs</span>
+        </div>
         <div class="finance-monthly">
           <div class="finance-monthly-label">Per month</div>
           <div class="finance-monthly-val" id="financeMonthly">£57.62</div>
@@ -666,6 +670,7 @@ const state = {
   cashYear1Save: 0,
   cashPayback: 0,
   cashReturn: 0,
+  financePayback: 0,
   lead: {
     canvasser: '', name: '', mobile: '', postcode: '', property: '', battLoc: '', removal: 'No', callback: 'ASAP', grade: 'WARM', notes: ''
   }
@@ -752,6 +757,26 @@ function recalc() {
   const prevCum = cum - yearlySave(state.usage, state.battery, yr);
   const intoYear = (state.cost - prevCum) / yearlySave(state.usage, state.battery, yr);
   state.cashPayback = (yr - 1) + intoYear;
+
+  // ===== FINANCE payback =====
+  // Year the customer turns net-positive: cumulative bill savings overtake
+  // cumulative finance payments. Payments run for the term, then stop;
+  // savings keep accruing. Crossover may land during or after the term.
+  const annualPay = state.monthly * 12;          // yearly finance cost during the term
+  let cumSaveF = 0, cumPayF = 0, fyr = 0;
+  while (fyr < 30) {
+    fyr++;
+    cumSaveF += yearlySave(state.usage, state.battery, fyr);
+    cumPayF += (fyr <= state.term) ? annualPay : 0;
+    if (cumSaveF >= cumPayF) break;              // net-positive reached
+  }
+  // Linear interpolation within the crossover year
+  const saveThisYr = yearlySave(state.usage, state.battery, fyr);
+  const payThisYr = (fyr <= state.term) ? annualPay : 0;
+  const netStart = (cumSaveF - saveThisYr) - (cumPayF - payThisYr); // net at start of year (<= 0)
+  const netRate = saveThisYr - payThisYr;                           // net change across the year
+  const intoYearF = netRate > 0 ? Math.max(0, Math.min(1, -netStart / netRate)) : 0;
+  state.financePayback = (fyr - 1) + intoYearF;
 }
 
 function fmt(n, fixed=2) {
@@ -759,6 +784,9 @@ function fmt(n, fixed=2) {
 }
 function fmtInt(n) {
   return '£' + Math.round(n).toLocaleString();
+}
+function fmtPayback(yrs) {
+  return yrs < 1 ? 'From day one' : yrs.toFixed(1) + ' yrs';
 }
 
 // ===== STEP NAVIGATION =====
@@ -1026,6 +1054,7 @@ function renderFinance() {
   document.getElementById('financeCost').textContent = fmtInt(state.cost);
   document.getElementById('financeTerm').textContent = state.term + ' years';
   document.getElementById('financeTotal').textContent = fmtInt(state.total);
+  document.getElementById('financePayback').textContent = fmtPayback(state.financePayback);
   document.getElementById('financeMonthly').textContent = fmt(state.monthly, 2);
   const h = document.getElementById('payHeadline');
   h.innerHTML = 'From <span class="accent">' + fmt(state.monthly, 0) + '/month.</span>';
@@ -1104,6 +1133,7 @@ function buildSummary() {
     <div class="cs-row"><span class="label">System</span><span class="val">${state.battery} kWh — ${fmtInt(state.cost)}</span></div>
     <div class="cs-row"><span class="label">Pitched as</span><span class="val">${state.payMode === 'cash' ? 'Pay outright' : state.payMode === 'zero' ? '12mo 0%' : 'Finance'}</span></div>
     ${state.payMode === 'finance' ? `<div class="cs-row"><span class="label">Monthly</span><span class="val">${fmt(state.monthly, 2)} (${state.term} yr)</span></div>` : ''}
+    ${state.payMode === 'finance' ? `<div class="cs-row"><span class="label">Payback</span><span class="val">${fmtPayback(state.financePayback)}</span></div>` : ''}
     ${state.payMode === 'zero' ? `<div class="cs-row"><span class="label">Monthly</span><span class="val">${fmt(state.zeroMonthly, 2)} (12mo · 0%)</span></div>` : ''}
     ${state.payMode === 'cash' ? `<div class="cs-row"><span class="label">Cash return</span><span class="val">${Math.round(state.cashReturn)}% · ${state.cashPayback.toFixed(1)} yr payback</span></div>` : ''}
     <div class="cs-row"><span class="label">10-yr profit</span><span class="val">${fmtInt(state.tenYrProfit)}</span></div>
@@ -1140,11 +1170,15 @@ function buildPayload() {
     offPeakRate: state.offPeak.toFixed(2) + 'p',
     battery: state.battery,
     cost: state.cost,
-    term: state.term,
-    monthly: state.monthly.toFixed(2),
+    term: state.payMode === 'finance' ? state.term : '',
+    monthly: state.payMode === 'finance' ? state.monthly.toFixed(2)
+           : state.payMode === 'zero' ? state.zeroMonthly.toFixed(2)
+           : '',
     payMode: state.payMode === 'cash' ? 'Pay outright' : state.payMode === 'zero' ? '12mo 0%' : 'Finance',
-    cashReturn: Math.round(state.cashReturn) + '%',
-    cashPayback: state.cashPayback.toFixed(1) + ' yrs',
+    cashReturn: state.payMode === 'cash' ? Math.round(state.cashReturn) + '%' : '',
+    cashPayback: state.payMode === 'cash' ? state.cashPayback.toFixed(1) + ' yrs'
+               : state.payMode === 'finance' ? fmtPayback(state.financePayback)
+               : '',
     profit: Math.round(state.tenYrProfit),
     lifetimeProfit: Math.round(state.lifetimeProfit),
     notes: state.lead.notes
